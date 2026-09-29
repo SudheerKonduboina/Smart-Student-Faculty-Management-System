@@ -50,9 +50,10 @@ export const AdminTimetable = () => {
   const fetchFaculties = async () => {
     try {
       const res = await API.get('/faculty');
-      setFaculties(res.data || []);
+      setFaculties(res.data?.content || res.data || []);
     } catch (err) {
       console.error(err);
+      setFaculties([]);
     }
   };
 
@@ -177,7 +178,7 @@ export const AdminTimetable = () => {
               <label className="form-label">Faculty</label>
               <select className="form-select" value={formData.facultyId} onChange={(e) => setFormData({ ...formData, facultyId: e.target.value })} required>
                 <option value="">Select Faculty</option>
-                {faculties.map(f => <option key={f.id} value={f.id}>{f.user?.firstName} {f.user?.lastName}</option>)}
+                {faculties.map(f => <option key={f.id} value={f.id}>{f.firstName} {f.lastName}</option>)}
               </select>
             </div>
 

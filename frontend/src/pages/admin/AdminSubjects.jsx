@@ -42,9 +42,10 @@ export const AdminSubjects = () => {
   const fetchFaculties = async () => {
     try {
       const res = await API.get('/faculty');
-      setFaculties(res.data || []);
+      setFaculties(res.data?.content || res.data || []);
     } catch (err) {
       console.error(err);
+      setFaculties([]);
     }
   };
 
@@ -102,7 +103,7 @@ export const AdminSubjects = () => {
                 <td>
                   {s.faculty ? (
                     <span style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>
-                      Prof. {s.faculty.user?.firstName} {s.faculty.user?.lastName}
+                      Prof. {s.faculty?.user?.firstName || s.faculty?.firstName} {s.faculty?.user?.lastName || s.faculty?.lastName}
                     </span>
                   ) : (
                     <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Unassigned</span>
@@ -146,7 +147,7 @@ export const AdminSubjects = () => {
             <select className="form-select" value={facultyId} onChange={(e) => setFacultyId(e.target.value)}>
               <option value="">Unassigned</option>
               {faculties.map(f => (
-                <option key={f.id} value={f.id}>{f.user?.firstName} {f.user?.lastName} ({f.employeeId})</option>
+                <option key={f.id} value={f.id}>{f.firstName} {f.lastName} ({f.facultyCode})</option>
               ))}
             </select>
           </div>

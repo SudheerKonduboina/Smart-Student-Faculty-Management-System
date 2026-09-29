@@ -80,7 +80,7 @@ public class GradeController {
         Double exam = body.get("examMarks") != null ? ((Number) body.get("examMarks")).doubleValue() : g.getExamMarks();
 
         String gradeType = (String) body.get("gradeType");
-        if (body.get("marksObtained") != null) {
+        if (body.get("marksObtained") != null && body.get("marksObtained") instanceof Number) {
             double marks = ((Number) body.get("marksObtained")).doubleValue();
             if ("INTERNAL".equalsIgnoreCase(gradeType)) {
                 internal = marks;

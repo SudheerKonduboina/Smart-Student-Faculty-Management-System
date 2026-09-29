@@ -18,7 +18,7 @@ public class AssignmentRequest {
     private String className;
 
     @NotNull(message = "Due date is required")
-    @Future(message = "Due date must be in the future")
+    @FutureOrPresent(message = "Due date must be today or in the future")
     private LocalDate dueDate;
 
     @Min(value = 1, message = "Max marks must be at least 1")

@@ -21,17 +21,54 @@ export const AdminAnalytics = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const [attRes, deptRes, gradeRes, leaveRes] = await Promise.all([
-        API.get('/analytics/attendance-distribution'),
-        API.get('/analytics/department-performance'),
-        API.get('/analytics/grade-distribution'),
-        API.get('/analytics/leave-stats')
+      const results = await Promise.allSettled([
+        API.get('/analytics/attendance'),
+        API.get('/analytics/students'),
+        API.get('/analytics/grades'),
+        API.get('/analytics/dashboard')
       ]);
 
-      setAttendanceDist(Object.entries(attRes.data || {}).map(([name, value]) => ({ name, value })));
-      setDeptPerf(Object.entries(deptRes.data || {}).map(([name, avg]) => ({ name, avg })));
-      setGradeDist(Object.entries(gradeRes.data || {}).map(([grade, count]) => ({ grade, count })));
-      setLeaveStats(Object.entries(leaveRes.data || {}).map(([status, count]) => ({ status, count })));
+      // Attendance distribution from /analytics/attendance
+      if (results[0].status === 'fulfilled') {
+        const attData = results[0].value.data || {};
+        const comparison = attData.subjectComparison || [];
+        if (comparison.length > 0) {
+          setAttendanceDist(comparison.map(s => ({ name: s.subject || s.code, value: s.present || 1 })));
+        } else {
+          // Fallback: build from dashboard stats
+          setAttendanceDist([
+            { name: 'Active Students', value: attData.totalStudents || 0 },
+            { name: 'Warning Threshold', value: attData.warningThreshold || 75 }
+          ]);
+        }
+      }
+
+      // Department performance from /analytics/students (byDepartment)
+      if (results[1].status === 'fulfilled') {
+        const stuData = results[1].value.data || {};
+        const byDept = stuData.byDepartment || [];
+        setDeptPerf(byDept.map(d => ({ name: d.department || d.code, avg: d.count || 0 })));
+      }
+
+      // Grade distribution from /analytics/grades
+      if (results[2].status === 'fulfilled') {
+        const gradeData = results[2].value.data || {};
+        const dist = gradeData.gradeDistribution || [];
+        if (Array.isArray(dist)) {
+          setGradeDist(dist.map(d => ({ grade: d.grade, count: Number(d.count) || 0 })));
+        }
+      }
+
+      // Leave stats from /analytics/dashboard
+      if (results[3].status === 'fulfilled') {
+        const dash = results[3].value.data || {};
+        setLeaveStats([
+          { status: 'Pending Leaves', count: dash.pendingLeaves || 0 },
+          { status: 'Total Students', count: dash.totalStudents || 0 },
+          { status: 'Total Faculty', count: dash.totalFaculty || 0 },
+          { status: 'Total Subjects', count: dash.totalSubjects || 0 }
+        ]);
+      }
     } catch (err) {
       console.error(err);
     } finally {

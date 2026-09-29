@@ -755,6 +755,13 @@ The pre-seeded database contains realistic accounts across all three organizatio
 ## 11. Troubleshooting & Notes
 
 - **Port Conflicts:** Ensure ports `3306` (MySQL), `8080` (Spring Boot), `5173` (Vite Frontend), and `8001` (Python QR Microservice) are free before launching.
+- **REST API Port vs. Web UI Port:** `http://localhost:8080` is the backend REST API. Accessing `http://localhost:8080/` in a web browser will return `403 Forbidden` because all non-public endpoints require JWT authentication. The interactive web application runs on **`http://localhost:5173`**.
 - **Uploaded Files:** Files uploaded by students for assignments are stored in `./uploads/assignments/`. Ensure the backend process has write permissions for this folder.
 - **CORS Errors:** In `application.properties`, `cors.allowed.origins` is configured to `http://localhost:5173`. If running the frontend on a different port or domain, update this property accordingly.
 - **QR Code Expiration:** The QR microservice tokens default to 60-second expiration. Ensure the system clock across your host machine is synchronized.
+- **Verified Bug Fixes (v1.1):**
+  - **Admin Subjects & Timetable:** Handled paginated `res.data.content` and corrected flat faculty field mappings (`f.firstName`, `f.facultyCode`).
+  - **Admin Analytics:** Realigned frontend metrics endpoints with backend (`/analytics/attendance`, `/grades`, `/students`, `/dashboard`) using `Promise.allSettled`.
+  - **Faculty Assignments:** Changed `dueDate` validation to `@FutureOrPresent` to permit same-day submissions.
+  - **Faculty Grades:** Added safe `instanceof Number` verification before casting `marksObtained`.
+
