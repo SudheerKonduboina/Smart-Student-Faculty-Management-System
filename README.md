@@ -1,172 +1,168 @@
 # 🎓 Smart Student & Faculty Management System (Smart-SMS)
 
-An enterprise-grade, full-stack academic lifecycle and management platform engineered with **Spring Boot 3**, **React 18 (Vite)**, **MySQL 8.4**, and a specialized **FastAPI Python Microservice** for high-security, dynamic QR code attendance.
+An enterprise-grade, full-stack academic lifecycle and campus operations platform built with **Spring Boot 3 (Java 17)**, **React 18 (Vite SPA)**, **MySQL 8.4**, and a specialized **FastAPI Python Microservice** for high-security, dynamic QR code attendance verification.
 
 ---
 
 ## 📑 Table of Contents
 
-- [1. System Overview](#1-system-overview)
-- [2. System Architecture & High-Level Map](#2-system-architecture--high-level-map)
-- [3. Complete Technology Stack](#3-complete-technology-stack)
+- [1. Executive System Overview](#1-executive-system-overview)
+- [2. System Architecture & Component Topology](#2-system-architecture--component-topology)
+- [3. Complete Technology Stack Reference](#3-complete-technology-stack-reference)
 - [4. Database Architecture & ER Diagram](#4-database-architecture--er-diagram)
   - [4.1 Visual Entity-Relationship Diagram](#41-visual-entity-relationship-diagram)
-  - [4.2 Comprehensive Table Specifications](#42-comprehensive-table-specifications)
+  - [4.2 Comprehensive Schema Specifications](#42-comprehensive-schema-specifications)
 - [5. API Routing Map & Endpoints Reference](#5-api-routing-map--endpoints-reference)
-  - [5.1 Authentication Endpoints](#51-authentication-endpoints)
-  - [5.2 User Management (Admin)](#52-user-management-admin)
-  - [5.3 Department & Subject Modules](#53-department--subject-modules)
-  - [5.4 Faculty & Student Profiles](#54-faculty--student-profiles)
-  - [5.5 Timetable Scheduling](#55-timetable-scheduling)
-  - [5.6 Attendance & Dynamic QR System](#56-attendance--dynamic-qr-system)
-  - [5.7 Assignments & Submissions](#57-assignments--submissions)
-  - [5.8 Grade Calculation & Publishing](#58-grade-calculation--publishing)
-  - [5.9 Leave Management](#59-leave-management)
-  - [5.10 Real-Time Notifications & Broadcasts](#510-real-time-notifications--broadcasts)
-  - [5.11 Institutional Analytics](#511-institutional-analytics)
-  - [5.12 Python QR Attendance Microservice](#512-python-qr-attendance-microservice)
+  - [5.1 Authentication Module (`/api/auth`)](#51-authentication-module-apiauth)
+  - [5.2 User Management Module (`/api/users`)](#52-user-management-module-apiusers)
+  - [5.3 Department Module (`/api/departments`)](#53-department-module-apidepartments)
+  - [5.4 Subject Module (`/api/subjects`)](#54-subject-module-apisubjects)
+  - [5.5 Faculty Module (`/api/faculty`)](#55-faculty-module-apifaculty)
+  - [5.6 Student Module (`/api/students`)](#56-student-module-apistudents)
+  - [5.7 Timetable Module (`/api/timetable`)](#57-timetable-module-apitimetable)
+  - [5.8 Attendance & Dynamic QR System (`/api/attendance`)](#58-attendance--dynamic-qr-system-apiattendance)
+  - [5.9 Assignment & Submission Subsystem (`/api/assignments`)](#59-assignment--submission-subsystem-apiassignments)
+  - [5.10 Gradebook & Evaluation Subsystem (`/api/grades`)](#510-gradebook--evaluation-subsystem-apigrades)
+  - [5.11 Leave Lifecycle Subsystem (`/api/leaves`)](#511-leave-lifecycle-subsystem-apileaves)
+  - [5.12 Notification & Broadcast Subsystem (`/api/notifications`)](#512-notification--broadcast-subsystem-apinotifications)
+  - [5.13 Institutional Analytics Subsystem (`/api/analytics`)](#513-institutional-analytics-subsystem-apianalytics)
+  - [5.14 Python FastAPI Dynamic QR Microservice (`:8001`)](#514-python-fastapi-dynamic-qr-microservice-8001)
 - [6. Frontend Module & UI Page Map](#6-frontend-module--ui-page-map)
-  - [6.1 Layout & State Management](#61-layout--state-management)
-  - [6.2 Role-Based Page Access Matrix](#62-role-based-page-access-matrix)
+  - [6.1 Layout, Contexts & Interceptors](#61-layout-contexts--interceptors)
+  - [6.2 Role-Based Access Matrix](#62-role-based-access-matrix)
 - [7. Security & Authentication Architecture](#7-security--authentication-architecture)
 - [8. Dynamic QR Attendance Mechanism](#8-dynamic-qr-attendance-mechanism)
 - [9. Installation & Execution Guide](#9-installation--execution-guide)
   - [9.1 Prerequisites](#91-prerequisites)
   - [9.2 Database Setup](#92-database-setup)
-  - [9.3 Python QR Microservice Setup](#93-python-qr-microservice-setup)
+  - [9.3 Python QR Attendance Microservice Setup](#93-python-qr-attendance-microservice-setup)
   - [9.4 Spring Boot Backend Setup](#94-spring-boot-backend-setup)
   - [9.5 React Frontend Setup](#95-react-frontend-setup)
-- [10. Demo Credentials](#10-demo-credentials)
-- [11. Troubleshooting & Notes](#11-troubleshooting--notes)
+- [10. Demo Credentials & Test Accounts](#10-demo-credentials--test-accounts)
+- [11. Production Deployment & Operational Notes](#11-production-deployment--operational-notes)
 
 ---
 
-## 1. System Overview
+## 1. Executive System Overview
 
-The **Smart Student & Faculty Management System** solves administrative overhead, attendance fraud, disjointed grading, and communication delays across educational institutions. 
+The **Smart Student & Faculty Management System (Smart-SMS)** eliminates administrative fragmentation, attendance fraud, disjointed grading pipelines, and communication gaps across academic institutions. 
 
-### Key Capabilities
-- 🔐 **Role-Based Access Control (RBAC):** Granular authorization for `ADMIN`, `FACULTY`, and `STUDENT` roles.
-- 📱 **Anti-Fraud QR Attendance:** Dynamic, expiring QR tokens signed using HMAC-SHA256 generated via a dedicated FastAPI microservice, scanned live in-browser with HTML5 camera integration.
-- 📂 **Academic Submissions & Grading:** Multipart assignment submission with file download controls, automated grade aggregation (Internal + Assignment + Exam), and instant grade publishing.
-- 🗓️ **Timetable & Scheduling:** Interactive multi-department class timetable scheduling with conflict checks.
-- 📝 **Leave Application Lifecycle:** Student self-service leave requests with faculty/admin multi-stage approval workflows.
-- 📊 **Executive Analytics:** High-level KPIs, attendance warning alerts (default `< 75%`), submission tracking, and department metrics visualized with Recharts.
-- 🔔 **Multi-Channel Notification System:** Target-specific and campus-wide administrative broadcasts.
+### Core Capabilities
+- 🔐 **Granular Role-Based Access Control (RBAC):** Three distinct organizational roles (`ADMIN`, `FACULTY`, `STUDENT`) governed by Spring Security stateless JWT filtering and client-side route guards.
+- 📱 **Anti-Fraud Dynamic QR Attendance:** Rotating, cryptographically signed QR tokens generated via a dedicated FastAPI microservice with in-browser HTML5 camera scanning and duplicate detection.
+- 📂 **Coursework & File Submission Subsystem:** Multipart assignment submission supporting documents (`pdf`, `doc`, `docx`, `zip`, `txt`, `images`), secure download authorization, and faculty grading workflows.
+- 🗓️ **Academic Scheduling Engine:** Multi-department timetable scheduler with day/slot conflict detection and faculty workload views.
+- 📝 **Leave Application Workflow:** Multi-stage self-service leave requests with administrative review and approval histories.
+- 📊 **Executive Analytics & KPI Dashboards:** Interactive metrics visualized using Recharts, including attendance warning defaulters (< 75%), grade distributions, department ratios, and coursework completion rates.
+- 🔔 **Multi-Channel Notification Broadcasts:** Campus-wide announcements and targeted user notifications with unread counts and read receipt tracking.
 
 ---
 
-## 2. System Architecture & High-Level Map
-
-The platform follows a decoupled, service-oriented architecture:
+## 2. System Architecture & Component Topology
 
 ```mermaid
 flowchart TD
-    subgraph ClientLayer ["Client Layer (Port 5173 / 3000)"]
-        UI["React 18 + Vite SPA"]
-        Scanner["HTML5 QR Scanner Engine"]
-        Axios["Axios Client (JWT Interceptor)"]
-        UI --> Scanner
-        UI --> Axios
+    subgraph ClientTier ["Frontend Client Tier (Port 5173 / Vite SPA)"]
+        ReactUI["React 18 Single Page Application"]
+        Scanner["HTML5-QRCode Camera Scanner"]
+        AxiosClient["Axios Client + JWT Interceptors"]
+        ReactUI --> Scanner
+        ReactUI --> AxiosClient
     end
 
-    subgraph Gateway ["Reverse Proxy / API Routes"]
-        Axios -->|/api/* Requests| Backend["Spring Boot REST API (Port 8080)"]
-        Axios -->|/uploads/* Files| Backend
+    subgraph GatewayProxy ["Vite Reverse Proxy / API Gateway"]
+        AxiosClient -->|/api/* Requests| SpringBackend["Spring Boot REST API (Port 8080)"]
+        AxiosClient -->|/uploads/* Files| SpringBackend
     end
 
-    subgraph CoreBackend ["Core Backend Services (Port 8080)"]
-        Security["Spring Security 6 (Stateless JWT Filter)"]
-        Controllers["REST Controllers (13 API Modules)"]
-        Services["Business Logic Services"]
-        Repos["Spring Data JPA Repositories"]
-        FileStore["File Storage Service (Local /uploads)"]
+    subgraph CoreBackend ["Core Application Tier (Port 8080)"]
+        SecFilter["Spring Security 6 (Stateless JWT Filter)"]
+        Controllers["13 REST Controller Modules"]
+        Services["Domain Business Logic Services"]
+        Repositories["Spring Data JPA Repositories"]
+        FileService["File Storage Engine (./uploads)"]
 
-        Backend --> Security
-        Security --> Controllers
+        SpringBackend --> SecFilter
+        SecFilter --> Controllers
         Controllers --> Services
-        Services --> Repos
-        Services --> FileStore
+        Services --> Repositories
+        Services --> FileService
     end
 
-    subgraph DataStorage ["Data Layer (Port 3306)"]
-        DB[("MySQL 8.4 Database\n(smart_sms)")]
-        Repos -->|JPA / Hibernate ORM| DB
+    subgraph DataTier ["Data Storage Tier (Port 3306)"]
+        MySQL[("MySQL 8.4 Engine\n(Database: smart_sms)")]
+        Repositories -->|Hibernate JPA / JDBC| MySQL
     end
 
-    subgraph Microservice ["Auxiliary Microservice (Port 8001)"]
-        QRService["FastAPI Python Microservice"]
-        QRGen["QR Token Generator & Image Base64"]
-        QRVal["Cryptographic Token Validator"]
+    subgraph MicroserviceTier ["Microservice Tier (Port 8001)"]
+        FastAPIApp["FastAPI QR Attendance Microservice"]
+        QRGenEngine["HMAC Token & Base64 PNG Generator"]
+        QRValEngine["Cryptographic Signature & Expiry Validator"]
 
-        QRService --> QRGen
-        QRService --> QRVal
-        Services -.->|WebClient HTTP Calls| QRService
+        FastAPIApp --> QRGenEngine
+        FastAPIApp --> QRValEngine
+        Services -.->|WebClient Non-blocking Calls| FastAPIApp
     end
 ```
 
 ---
 
-## 3. Complete Technology Stack
+## 3. Complete Technology Stack Reference
 
-| Domain | Technology / Library | Version | Role in Project |
+| Layer / Domain | Technology | Version | Purpose / Architectural Responsibility |
 | :--- | :--- | :--- | :--- |
-| **Frontend UI** | React | `18.2.0` | Declarative component UI library |
-| **Build Tool** | Vite | `5.1.6` | Fast HMR dev server and bundler |
-| **Routing** | React Router DOM | `6.22.3` | Client-side routing with role-guarded routes |
-| **HTTP Client** | Axios | `1.6.8` | REST API communication with automatic JWT injection |
-| **QR Scanning** | HTML5-QRCode | `2.3.8` | Real-time web camera stream QR reading |
-| **Data Viz** | Recharts | `2.12.3` | Responsive charts for attendance & grade analytics |
-| **Iconography** | Lucide React | `0.359.0` | Consistent vector icons |
-| **Styling** | Vanilla CSS + CSS Variables | Modern | Custom glassmorphism, responsive themes, modern aesthetics |
-| **Backend Core** | Spring Boot | `3.2.3` | Enterprise Java application framework |
-| **Language** | Java (Corretto/OpenJDK) | `17 LTS` | Core programming language |
-| **Security** | Spring Security + JJWT | `0.11.5` | Stateless authentication, RBAC, BCrypt passwords |
-| **Data Access** | Spring Data JPA / Hibernate | `3.2.3` | Object-Relational Mapping (ORM) and data abstraction |
-| **API Docs** | SpringDoc OpenAPI (Swagger UI)| `2.3.0` | Auto-generated interactive API documentation |
-| **HTTP WebClient** | Spring WebFlux | `3.2.3` | Non-blocking HTTP client calling the Python QR microservice |
-| **File I/O** | Apache Commons IO / Lang3 | `2.15.1` | Multipart file management and input sanitization |
-| **Microservice** | Python FastAPI + Uvicorn | `1.0.0` | High-speed dynamic QR token generation and validation |
-| **QR Engine** | Python `qrcode` + `Pillow` | Latest | Generation of base64 PNG QR code matrices |
-| **Database** | MySQL Server (Portable/Standard) | `8.0 / 8.4` | Relational database with InnoDB engine and ACID compliance |
+| **Backend Framework** | Spring Boot | `3.2.3` | Core microservice framework, REST controllers, DI container |
+| **Language Runtime** | Java JDK | `17 LTS` | Backend execution environment |
+| **Persistence / ORM** | Spring Data JPA (Hibernate) | `6.4.4` | Relational data persistence, schema validation, entity mappings |
+| **Security Layer** | Spring Security & JJWT | `6.2.2` / `0.11.5` | Stateless authentication, BCrypt hashing, JWT authorization |
+| **Microservice Client** | Spring WebFlux (WebClient) | `3.2.3` | Non-blocking HTTP integration with Python microservice |
+| **API Documentation** | Springdoc OpenAPI (Swagger) | `2.3.0` | Interactive REST documentation and sandbox at `/swagger-ui/index.html` |
+| **Microservice Backend** | Python FastAPI & Uvicorn | `0.110.0` / `0.28.0` | High-performance dynamic QR generation & cryptographic validation |
+| **QR Generation Engine** | Python `qrcode` & `Pillow` | `7.4.2` / `10.2.0` | Base64 PNG image rendering of signed payload tokens |
+| **Database Engine** | MySQL Server / MariaDB | `8.4.9` | Relational storage (`smart_sms`), indexed foreign keys, constraints |
+| **Frontend Framework** | React | `18.2.0` | Component-driven declarative UI architecture |
+| **Build Tool & Bundler** | Vite | `5.1.6` | Fast ESM build system, HMR dev server, reverse proxy |
+| **Routing Engine** | React Router DOM | `6.22.3` | Client-side routing with role-guarded `ProtectedRoute` wrappers |
+| **HTTP Interceptor** | Axios | `1.6.8` | REST client with bearer token injection & auto payload unwrapping |
+| **QR Scanning Engine** | HTML5-QRCode | `2.3.8` | Browser webcam stream processing and QR token decoding |
+| **Data Visualization** | Recharts | `2.12.3` | Responsive analytics, pie charts, bar charts, line graphs |
+| **Iconography** | Lucide React | `0.359.0` | Clean vector iconography across dashboards and navigation |
 
 ---
 
 ## 4. Database Architecture & ER Diagram
 
-The database schema (`smart_sms`) is normalized to 3NF, utilizing foreign keys with `ON DELETE CASCADE` or `ON DELETE SET NULL` constraints to ensure referential integrity.
-
 ### 4.1 Visual Entity-Relationship Diagram
 
 ```mermaid
 erDiagram
-    USERS ||--o| FACULTY : "1:1 profile"
-    USERS ||--o| STUDENTS : "1:1 profile"
+    USERS ||--o| FACULTY : "extends (1:1)"
+    USERS ||--o| STUDENTS : "extends (1:1)"
     USERS ||--o{ NOTIFICATIONS : "receives"
     USERS ||--o{ LEAVE_APPLICATIONS : "reviews"
-
+    
     DEPARTMENTS ||--o{ FACULTY : "employs"
     DEPARTMENTS ||--o{ STUDENTS : "enrolls"
-    DEPARTMENTS ||--o{ SUBJECTS : "curates"
+    DEPARTMENTS ||--o{ SUBJECTS : "offers"
     DEPARTMENTS ||--o| FACULTY : "headed by (head_faculty_id)"
 
     FACULTY ||--o{ SUBJECTS : "teaches"
-    FACULTY ||--o{ TIMETABLE : "scheduled for"
+    FACULTY ||--o{ TIMETABLE : "scheduled in"
     FACULTY ||--o{ ATTENDANCE_SESSIONS : "conducts"
-    FACULTY ||--o{ ASSIGNMENTS : "assigns"
+    FACULTY ||--o{ ASSIGNMENTS : "issues"
 
     STUDENTS ||--o{ ATTENDANCE : "marked in"
     STUDENTS ||--o{ ASSIGNMENT_SUBMISSIONS : "submits"
-    STUDENTS ||--o{ LEAVE_APPLICATIONS : "applies"
-    STUDENTS ||--o{ GRADES : "receives"
+    STUDENTS ||--o{ LEAVE_APPLICATIONS : "applies for"
+    STUDENTS ||--o{ GRADES : "earns"
 
-    SUBJECTS ||--o{ TIMETABLE : "placed in"
-    SUBJECTS ||--o{ ATTENDANCE_SESSIONS : "logged for"
-    SUBJECTS ||--o{ ASSIGNMENTS : "categorized under"
-    SUBJECTS ||--o{ GRADES : "evaluated under"
+    SUBJECTS ||--o{ TIMETABLE : "scheduled in"
+    SUBJECTS ||--o{ ATTENDANCE_SESSIONS : "holds"
+    SUBJECTS ||--o{ ASSIGNMENTS : "assigned under"
+    SUBJECTS ||--o{ GRADES : "graded under"
 
-    ATTENDANCE_SESSIONS ||--o{ ATTENDANCE : "contains records"
-    ASSIGNMENTS ||--o{ ASSIGNMENT_SUBMISSIONS : "collected solutions"
+    ATTENDANCE_SESSIONS ||--o{ ATTENDANCE : "contains"
+    ASSIGNMENTS ||--o{ ASSIGNMENT_SUBMISSIONS : "evaluates"
 
     USERS {
         bigint id PK
@@ -175,7 +171,7 @@ erDiagram
         varchar first_name
         varchar last_name
         varchar phone
-        enum role "ADMIN, FACULTY, STUDENT"
+        enum role "STUDENT, FACULTY, ADMIN"
         boolean active
         datetime created_at
         datetime updated_at
@@ -228,7 +224,7 @@ erDiagram
         bigint faculty_id FK
         varchar class_name
         varchar room
-        enum day_of_week "MONDAY...SATURDAY"
+        enum day_of_week "MONDAY..SATURDAY"
         time start_time
         time end_time
         boolean active
@@ -328,234 +324,185 @@ erDiagram
     }
 ```
 
-### 4.2 Comprehensive Table Specifications
+### 4.2 Comprehensive Schema Specifications
 
-#### 1. `users`
-- Central authentication and credential store for all actors.
-- **Constraints:** `email` UNIQUE, `role` in `('STUDENT', 'FACULTY', 'ADMIN')`.
-- **Indexes:** `idx_users_email` on `email`, `idx_users_role` on `role`.
-
-#### 2. `departments`
-- Academic branches (e.g., Computer Science, Information Technology).
-- **Constraints:** `name` UNIQUE, `code` UNIQUE.
-- **Foreign Keys:** `head_faculty_id` references `faculty(id)` (`ON DELETE SET NULL`).
-
-#### 3. `faculty`
-- Profiles for faculty members linked 1:1 with `users`.
-- **Constraints:** `user_id` UNIQUE, `faculty_code` UNIQUE.
-- **Foreign Keys:** `user_id` references `users(id)`, `department_id` references `departments(id)`.
-
-#### 4. `students`
-- Student academic profiles linked 1:1 with `users`.
-- **Constraints:** `user_id` UNIQUE, `student_code` UNIQUE.
-- **Foreign Keys:** `user_id` references `users(id)`, `department_id` references `departments(id)`.
-
-#### 5. `subjects`
-- Individual courses offered by departments.
-- **Constraints:** `code` UNIQUE.
-- **Foreign Keys:** `department_id` references `departments(id)`, `faculty_id` references `faculty(id)` (`ON DELETE SET NULL`).
-
-#### 6. `timetable`
-- Weekly schedule slots for class sessions.
-- **Foreign Keys:** `subject_id` references `subjects(id)`, `faculty_id` references `faculty(id)`.
-- **Indexes:** `idx_tt_faculty`, `idx_tt_class`, `idx_tt_day`.
-
-#### 7. `attendance_sessions`
-- Represents a teaching session where attendance is marked (either via manual entry or dynamically refreshed QR).
-- **Foreign Keys:** `faculty_id` references `faculty(id)`, `subject_id` references `subjects(id)`.
-- **Fields:** `qr_token`, `qr_expires_at`, `session_type` (`'MANUAL'`, `'QR'`).
-
-#### 8. `attendance`
-- Individual student participation records per session.
-- **Constraints:** `uk_student_session` UNIQUE (`student_id`, `session_id`) preventing double-marking.
-- **Foreign Keys:** `student_id` references `students(id)`, `session_id` references `attendance_sessions(id)`.
-
-#### 9. `assignments`
-- Homework tasks, lab reports, and projects issued by faculty.
-- **Foreign Keys:** `faculty_id` references `faculty(id)`, `subject_id` references `subjects(id)`.
-
-#### 10. `assignment_submissions`
-- Uploaded student work, file paths, marks, and feedback.
-- **Constraints:** `uk_assignment_student` UNIQUE (`assignment_id`, `student_id`).
-- **Foreign Keys:** `assignment_id` references `assignments(id)`, `student_id` references `students(id)`.
-
-#### 11. `leave_applications`
-- Student leave requests with dates, reasons, and review auditing.
-- **Foreign Keys:** `student_id` references `students(id)`, `reviewed_by` references `users(id)`.
-
-#### 12. `grades`
-- Semester grading table with composite marks breakdown.
-- **Constraints:** `uk_student_subject` UNIQUE (`student_id`, `subject_id`).
-- **Calculation:** `total_marks = internal_marks + assignment_marks + exam_marks`. Letter grades: `A+`, `A`, `B`, `C`, `D`, `F`.
-
-#### 13. `notifications`
-- In-app notification messages sent to users.
-- **Indexes:** `idx_notif_user`, `idx_notif_read`, `idx_notif_entity`.
+1. **`users`:** Unified table for authentication identities and system-wide roles (`ADMIN`, `FACULTY`, `STUDENT`).
+2. **`departments`:** Academic departments (CSE, ECE, MECH, etc.) linked to faculty department heads.
+3. **`faculty`:** Extends `users` table via `user_id` 1:1, specifying `faculty_code` and `department_id`.
+4. **`students`:** Extends `users` table via `user_id` 1:1, specifying `student_code`, `department_id`, and `semester`.
+5. **`subjects`:** Academic courses with unique `code`, `credits`, department parent, and assigned faculty teacher.
+6. **`timetable`:** Class scheduling matrix mapping subject, faculty, class name, room number, day of the week, start time, and end time.
+7. **`attendance_sessions`:** Classroom session records supporting either manual entry or dynamic time-limited QR attendance.
+8. **`attendance`:** Individual student attendance records per session with unique constraint `(student_id, session_id)` ensuring single submissions.
+9. **`assignments`:** Course assignments issued by faculty with titles, instructions, due dates, and max marks.
+10. **`assignment_submissions`:** Student assignment submissions with uploaded file metadata, submission timestamp, and faculty grading remarks.
+11. **`leave_applications`:** Student self-service leave requests with date spans, reasons, and faculty/admin review timestamps.
+12. **`grades`:** Academic gradebook tracking internal, assignment, and exam breakdowns, computed overall grade, and publication state.
+13. **`notifications`:** User notification stream tracking broadcast announcements, read status, and contextual entity links.
 
 ---
 
 ## 5. API Routing Map & Endpoints Reference
 
-All Spring Boot REST endpoints are prefixed with `/api`. Responses adhere to the standard JSON structure:
-```json
-{
-  "success": true,
-  "message": "Operation description",
-  "data": { ... },
-  "timestamp": "2026-09-29T12:00:00"
-}
-```
-
-### 5.1 Authentication Endpoints (`/api/auth`)
-| Method | Endpoint | Access | Description |
+### 5.1 Authentication Module (`/api/auth`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Public | Authenticates user; returns JWT token and profile data |
-| `GET` | `/api/auth/me` | Authenticated | Fetches profile of the currently logged-in user |
-| `POST` | `/api/auth/logout` | Authenticated | Clears client-side session tokens |
-| `POST` | `/api/auth/change-password` | Authenticated | Updates password for authenticated account |
+| `POST` | `/api/auth/login` | Public | Authenticates credentials; returns signed JWT token + user profile |
+| `GET` | `/api/auth/me` | Authenticated | Retrieves profile of currently authenticated user |
+| `POST` | `/api/auth/logout` | Authenticated | Client-side session invalidation acknowledgment |
+| `POST` | `/api/auth/change-password` | Authenticated | Updates current user password using BCrypt hashing |
 
-### 5.2 User Management (`/api/users`)
-| Method | Endpoint | Access | Description |
+### 5.2 User Management Module (`/api/users`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/users` | Admin | Paginated user list with filters (`role`, `search`, `active`) |
-| `POST` | `/api/users` | Admin | Creates student or faculty account with automatic profile linking |
-| `PUT` | `/api/users/{id}/toggle-active`| Admin | Activates/deactivates user access |
+| `GET` | `/api/users` | Admin | Returns paginated list of users with search, role, and active status filters |
+| `POST` | `/api/users` | Admin | Creates new Student or Faculty user with auto-generated code and profile |
+| `PUT` | `/api/users/{id}/toggle-active` | Admin | Activates or deactivates user profile (`?role=STUDENT` or `?role=FACULTY`) |
 
-### 5.3 Department & Subject Modules
-| Method | Endpoint | Access | Description |
+### 5.3 Department Module (`/api/departments`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/departments` | Authenticated | Lists all active departments |
-| `GET` | `/api/departments/{id}` | Authenticated | Returns department details |
-| `POST` | `/api/departments` | Admin | Creates a new department |
-| `PUT` | `/api/departments/{id}` | Admin | Updates department metadata |
-| `PUT` | `/api/departments/{id}/toggle-active` | Admin | Safe deactivation check (verifies no active students/faculty) |
-| `GET` | `/api/subjects` | Authenticated | Lists subjects (filterable by `department`, `faculty`) |
-| `GET` | `/api/subjects/{id}` | Authenticated | Returns subject details |
-| `POST` | `/api/subjects` | Admin | Creates a new subject |
-| `PUT` | `/api/subjects/{id}` | Admin | Updates subject details and assigned faculty |
-| `PUT` | `/api/subjects/{id}/toggle-active` | Admin | Safe deactivation check (verifies no active timetable) |
+| `GET` | `/api/departments` | Authenticated | Returns all active academic departments |
+| `GET` | `/api/departments/{id}` | Authenticated | Returns department details by ID |
+| `POST` | `/api/departments` | Admin | Registers new academic department |
+| `PUT` | `/api/departments/{id}` | Admin | Modifies department title or code |
+| `PUT` | `/api/departments/{id}/toggle-active`| Admin | Deactivates department (with active student/faculty safety checks) |
 
-### 5.4 Faculty & Student Profiles
-| Method | Endpoint | Access | Description |
+### 5.4 Subject Module (`/api/subjects`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/faculty` | Admin | Lists faculty directory |
-| `GET` | `/api/faculty/{id}` | Admin, Faculty | Fetches faculty member details |
-| `GET` | `/api/faculty/me` | Faculty | Fetches own faculty profile |
-| `PUT` | `/api/faculty/{id}` | Admin | Updates faculty personal details / department |
-| `PUT` | `/api/faculty/{id}/toggle-active` | Admin | Toggles active status |
-| `GET` | `/api/students` | Admin, Faculty | Lists students (filterable by `search`, `department`, `semester`)|
-| `GET` | `/api/students/{id}` | Admin, Faculty, Self | Returns student details |
-| `GET` | `/api/students/me` | Student | Fetches own student profile |
-| `PUT` | `/api/students/{id}` | Admin | Updates student profile details |
-| `PUT` | `/api/students/{id}/toggle-active`| Admin | Toggles student active status |
+| `GET` | `/api/subjects` | Authenticated | Returns subjects with optional `?department=` and `?faculty=` filtering |
+| `GET` | `/api/subjects/{id}` | Authenticated | Returns single subject profile |
+| `POST` | `/api/subjects` | Admin | Adds subject with credits, department, and faculty assignment |
+| `PUT` | `/api/subjects/{id}` | Admin | Modifies subject credits, title, code, or assigned instructor |
+| `PUT` | `/api/subjects/{id}/toggle-active` | Admin | Toggles subject active state (guards against active timetable entries) |
 
-### 5.5 Timetable Scheduling (`/api/timetable`)
-| Method | Endpoint | Access | Description |
+### 5.5 Faculty Module (`/api/faculty`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/timetable` | Authenticated | Lists timetable (filterable by `className`, `facultyId`) |
-| `GET` | `/api/timetable/my` | Authenticated | Returns personal timetable (Faculty schedule or Student class) |
-| `POST` | `/api/timetable` | Admin | Creates a timetable entry |
-| `PUT` | `/api/timetable/{id}` | Admin | Updates timetable slot |
+| `GET` | `/api/faculty` | Admin | Paginated list of faculty members with search and department filtering |
+| `GET` | `/api/faculty/{id}` | Admin, Faculty | Retrieves faculty profile by ID |
+| `GET` | `/api/faculty/me` | Faculty | Returns current authenticated faculty profile |
+| `PUT` | `/api/faculty/{id}` | Admin | Updates faculty personal and departmental information |
+| `PUT` | `/api/faculty/{id}/toggle-active`| Admin | Activates or deactivates faculty member |
+
+### 5.6 Student Module (`/api/students`)
+| Method | Endpoint | Authorization | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/students` | Admin, Faculty | Paginated student roster with department and semester filters |
+| `GET` | `/api/students/{id}` | Admin, Faculty, Student (Self)| Retrieves detailed student profile |
+| `GET` | `/api/students/me` | Student | Retrieves current authenticated student record |
+| `PUT` | `/api/students/{id}` | Admin | Updates student name, phone, department, or semester |
+| `PUT` | `/api/students/{id}/toggle-active`| Admin | Activates or deactivates student record |
+
+### 5.7 Timetable Module (`/api/timetable`)
+| Method | Endpoint | Authorization | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/timetable` | Authenticated | Returns timetable entries (filterable by `?className=` or `?facultyId=`) |
+| `GET` | `/api/timetable/my` | Authenticated | Returns personalized schedule according to user role and class |
+| `POST` | `/api/timetable` | Admin | Creates timetable entry with slot conflict checks |
+| `PUT` | `/api/timetable/{id}` | Admin | Updates timetable schedule |
 | `DELETE` | `/api/timetable/{id}` | Admin | Deletes timetable slot |
 
-### 5.6 Attendance & Dynamic QR System (`/api/attendance`)
-| Method | Endpoint | Access | Description |
+### 5.8 Attendance & Dynamic QR System (`/api/attendance`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/attendance/sessions` | Faculty | Creates a manual attendance session |
-| `POST` | `/api/attendance/sessions/{sessionId}/mark`| Faculty | Batch marks attendance records for a session |
-| `POST` | `/api/attendance/mark-manual` | Faculty | One-shot endpoint creating session and recording student statuses |
-| `POST` | `/api/attendance/qr/start` or `/qr-session` | Faculty | Generates an expiring QR code session via Python microservice |
-| `GET` | `/api/attendance/qr/{sessionId}/status` | Faculty | Real-time attendee counter for active QR session |
-| `POST` | `/api/attendance/qr/mark` or `/mark-qr` | Student | Validates QR token and logs student attendance |
-| `GET` | `/api/attendance/my` | Student | Returns student's personal attendance percentages & stats |
-| `GET` | `/api/attendance/student/{studentId}` | Authenticated | Returns attendance summary for specified student |
-| `GET` | `/api/attendance/admin` | Admin | Multi-filter paginated attendance audit log |
+| `POST` | `/api/attendance/sessions/{sessionId}/mark` | Faculty | Records batch manual student attendances |
+| `POST` | `/api/attendance/mark-manual` | Faculty | Unified endpoint: creates session and saves student attendance list |
+| `POST` | `/api/attendance/qr/start` / `/api/attendance/qr-session` | Faculty | Triggers Python QR microservice to start dynamic session |
+| `GET` | `/api/attendance/qr/{sessionId}/status` | Faculty | Checks active QR session status and current scanned student count |
+| `POST` | `/api/attendance/qr/mark` / `/api/attendance/mark-qr` | Student | Scans and marks student attendance via dynamic QR cryptographic token |
+| `GET` | `/api/attendance/student/{studentId}` | Admin, Faculty, Student | Returns aggregated subject-wise attendance metrics |
+| `GET` | `/api/attendance/my` | Student | Returns current student's attendance summary |
+| `GET` | `/api/attendance/admin` | Admin | Comprehensive system-wide attendance records with pagination |
 
-### 5.7 Assignments & Submissions (`/api/assignments`)
-| Method | Endpoint | Access | Description |
+### 5.9 Assignment & Submission Subsystem (`/api/assignments`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/assignments` | Authenticated | Lists assignments (filterable by `subjectId`, `facultyId`, `className`) |
-| `GET` | `/api/assignments/{id}` | Authenticated | Fetches assignment details |
-| `POST` | `/api/assignments` | Faculty | Publishes a new assignment |
-| `PUT` | `/api/assignments/{id}` | Faculty | Updates an existing assignment |
-| `PUT` | `/api/assignments/{id}/toggle-active` | Faculty, Admin | Toggles assignment active status |
+| `GET` | `/api/assignments` | Authenticated | Lists assignments filtered by `subjectId`, `facultyId`, or `className` |
+| `GET` | `/api/assignments/{id}` | Authenticated | Retrieves assignment details |
+| `POST` | `/api/assignments` | Faculty | Creates new assignment with title, max marks, and due date |
+| `PUT` | `/api/assignments/{id}` | Faculty | Modifies assignment properties |
+| `PUT` | `/api/assignments/{id}/toggle-active` | Admin, Faculty | Closes or re-opens assignment |
 | `POST` | `/api/assignments/{id}/submit` | Student | Multipart file upload and notes submission |
-| `GET` | `/api/assignments/my` | Student | Returns list of student's own submissions |
-| `GET` | `/api/assignments/{id}/submissions` | Faculty, Admin | View all student submissions for an assignment |
-| `PUT` | `/api/assignments/submissions/{id}/grade`| Faculty | Grades submission with marks and written feedback |
-| `GET` | `/api/assignments/submissions/{id}/download` | Authorized | Secure file download (authorized for student, owner faculty, admin) |
+| `GET` | `/api/assignments/{id}/submissions` | Admin, Faculty | Lists all student submissions for an assignment |
+| `GET` | `/api/assignments/my` | Student | Retrieves current student's submissions across all assignments |
+| `PUT` | `/api/assignments/submissions/{id}/grade`| Faculty | Grades student submission with score and evaluation feedback |
+| `GET` | `/api/assignments/submissions/{id}/download`| Student (Own), Faculty (Own), Admin | Secure authorized binary file download stream |
 
-### 5.8 Grade Management (`/api/grades`)
-| Method | Endpoint | Access | Description |
+### 5.10 Gradebook & Evaluation Subsystem (`/api/grades`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/grades` | Faculty, Admin | View subject grade book |
-| `GET` | `/api/grades/my` | Student | View published grades for logged-in student |
-| `GET` | `/api/grades/student/{studentId}`| Faculty, Admin | View grade card for a specific student |
-| `POST` | `/api/grades` | Faculty | Save or update student grades (Internal, Assignment, Exam) |
-| `PUT` | `/api/grades/{id}/publish` | Faculty, Admin | Publishes grade to make it visible to student |
-| `POST` | `/api/grades/bulk` | Faculty | Bulk grade upload / entry |
+| `GET` | `/api/grades` | Admin, Faculty | Retrieves grades for faculty's assigned subjects or all grades for Admin |
+| `POST` | `/api/grades` | Faculty | Creates or updates grade breakdown (`internal`, `assignment`, `exam`) |
+| `PUT` | `/api/grades/{id}/publish` | Faculty | Publishes grade, making it visible to students |
+| `GET` | `/api/grades/my` | Student | Retrieves student's published grades |
+| `GET` | `/api/grades/student/{studentId}` | Admin, Faculty | Retrieves complete grade history for a student |
+| `GET` | `/api/grades/subject/{subjectId}` | Admin, Faculty | Retrieves grade distributions for a specific subject |
 
-### 5.9 Leave Applications (`/api/leaves`)
-| Method | Endpoint | Access | Description |
+### 5.11 Leave Lifecycle Subsystem (`/api/leaves`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/leaves` | Student | Submits new leave application |
-| `GET` | `/api/leaves` | Authenticated | Lists leaves (Students see own; Faculty/Admin see department/all) |
-| `GET` | `/api/leaves/{id}` | Authenticated | Returns leave details |
-| `PUT` | `/api/leaves/{id}/review` | Faculty, Admin | Approves or rejects leave with review comments |
+| `POST` | `/api/leaves` | Student | Submits new leave application with date range and reason |
+| `GET` | `/api/leaves` | Authenticated | Lists leave applications (filtered by self for students; all for faculty/admin) |
+| `GET` | `/api/leaves/{id}` | Authenticated | Retrieves leave request details |
+| `PUT` | `/api/leaves/{id}/review` | Admin, Faculty | Approves or rejects leave with reviewer remarks |
 
-### 5.10 Real-Time Notifications (`/api/notifications`)
-| Method | Endpoint | Access | Description |
+### 5.12 Notification & Broadcast Subsystem (`/api/notifications`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/notifications` | Authenticated | Paginated notifications for logged-in user |
-| `GET` | `/api/notifications/unread-count` | Authenticated | Count of unread notifications |
+| `GET` | `/api/notifications` | Authenticated | Retrieves current user notifications with unread status filter |
+| `GET` | `/api/notifications/unread-count` | Authenticated | Returns real-time unread notification count |
 | `PUT` | `/api/notifications/{id}/read` | Authenticated | Marks a specific notification as read |
-| `PUT` | `/api/notifications/read-all` | Authenticated | Marks all notifications as read |
-| `POST` | `/api/notifications` | Admin | Broadcasts notification to a specific user or all users |
-| `DELETE` | `/api/notifications/{id}` | Admin | Deletes notification |
+| `PUT` | `/api/notifications/read-all` | Authenticated | Marks all user notifications as read |
+| `POST` | `/api/notifications` | Admin | Broadcasts announcement to specific user or all campus users |
+| `DELETE` | `/api/notifications/{id}` | Admin | Deletes notification record |
 
-### 5.11 Institutional Analytics (`/api/analytics`)
-| Method | Endpoint | Access | Description |
+### 5.13 Institutional Analytics Subsystem (`/api/analytics`)
+| Method | Endpoint | Authorization | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/analytics/dashboard` | Admin | System counts, active users, departments, and health metrics |
-| `GET` | `/api/analytics/attendance` | Admin, Faculty | Attendance percentages, defaulter counts (<75%), trends |
-| `GET` | `/api/analytics/assignments` | Admin, Faculty | Submission rates, grading progress, overdue ratios |
-| `GET` | `/api/analytics/grades` | Admin, Faculty | Grade distributions (A+, A, B, etc.) and average marks |
-| `GET` | `/api/analytics/students` | Admin | Enrollment distributions by department and semester |
+| `GET` | `/api/analytics/dashboard` | Admin | High-level system counts, active user totals, and campus health |
+| `GET` | `/api/analytics/attendance` | Admin, Faculty | Attendance percentages, defaulter counts (< 75%), monthly trends |
+| `GET` | `/api/analytics/assignments` | Admin, Faculty | Coursework submission rates, pending evaluation counts, overdue metrics |
+| `GET` | `/api/analytics/grades` | Admin, Faculty | Grade distribution histograms (`A+`, `A`, `B`, `C`, `F`) and averages |
+| `GET` | `/api/analytics/students` | Admin | Departmental student distributions and semester ratios |
 
-### 5.12 Python QR Microservice (`http://localhost:8001`)
+### 5.14 Python FastAPI Dynamic QR Microservice (`:8001`)
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/health` | Microservice health check probe |
-| `POST` | `/api/qr/generate` | Generates HS256 signed token, expiration timestamp, and Base64 QR code image |
-| `POST` | `/api/qr/validate` | Validates token authenticity, signature, and expiration |
-| `GET` | `/api/qr/validate/{token}` | URL-based token validator |
+| `GET` | `/health` | Microservice liveness and health probe |
+| `POST` | `/api/qr/generate` (or `/qr/generate`) | Issues HS256-signed dynamic token and returns Base64 PNG QR image |
+| `POST` | `/api/qr/validate` (or `/qr/validate`) | Validates cryptographic signature, session parameters, and token expiration |
+| `GET` | `/api/qr/validate/{token}` | URL-based validator returning token payload metadata |
 
 ---
 
 ## 6. Frontend Module & UI Page Map
 
-### 6.1 Layout & State Management
-- **`AuthContext.jsx`:** Stores authenticated user profile, JWT token in `localStorage`, and handles automatic token refreshing/invalidation on HTTP `401`.
-- **`Navbar.jsx`:** Displays university branding, user role pill, quick notification dropdown with unread badge, and profile quick menu.
-- **`Sidebar.jsx`:** Dynamically renders navigation links matching the authenticated user's role.
-- **`ProtectedRoute.jsx`:** Evaluates authentication state and allowed roles before rendering route content, redirecting unauthorized attempts to `/dashboard` or `/login`.
+### 6.1 Layout, Contexts & Interceptors
+- **`AuthContext.jsx`:** Manages authentication lifecycle, JWT token persistence in `localStorage`, user metadata, and automatic session logout on HTTP `401`.
+- **`api.js` (Axios Engine):** Injects `Authorization: Bearer <token>` into all outbound requests and unwraps the Spring Boot `ApiResponse.data` payload.
+- **`Navbar.jsx`:** Displays university branding, active role badge, live unread notification counter, quick alerts dropdown, and user profile navigation.
+- **`Sidebar.jsx`:** Dynamically renders navigational items scoped to the authenticated user's assigned role.
+- **`ProtectedRoute.jsx`:** Guards routes against unauthorized roles, redirecting unauthenticated traffic to `/login`.
 
-### 6.2 Role-Based Page Access Matrix
+### 6.2 Role-Based Access Matrix
 
 ```
-┌───────────────────────────────┬───────────────────────────────┬───────────────────────┐
-│ ADMIN                         │ FACULTY                       │ STUDENT               │
-├───────────────────────────────┼───────────────────────────────┼───────────────────────┤
-│ • /dashboard                  │ • /dashboard                  │ • /dashboard          │
-│ • /admin/users                │ • /faculty/attendance         │ • /student/attendance │
-│ • /admin/departments          │ • /faculty/qr-session         │ • /student/qr-scan    │
-│ • /admin/subjects             │ • /faculty/assignments        │ • /student/assignments│
-│ • /admin/timetable            │ • /faculty/grades             │ • /student/grades     │
-│ • /admin/analytics            │ • /faculty/leaves             │ • /student/leaves     │
-│ • /profile                    │ • /faculty/timetable          │ • /student/timetable  │
-│ • /notifications              │ • /profile                    │ • /profile            │
-│                               │ • /notifications              │ • /notifications      │
-└───────────────────────────────┴───────────────────────────────┴───────────────────────┘
+┌─────────────────────────────────┬─────────────────────────────────┬─────────────────────────────────┐
+│ 🛡️ ADMIN MODULES                 │ 👨‍🏫 FACULTY MODULES             │ 🎓 STUDENT MODULES               │
+├─────────────────────────────────┼─────────────────────────────────┼─────────────────────────────────┤
+│ • /dashboard (Executive KPIs)   │ • /dashboard (Teacher Overview) │ • /dashboard (Student Overview) │
+│ • /admin/users (CRUD + Roles)   │ • /faculty/attendance (Manual)  │ • /student/attendance (Summary) │
+│ • /admin/departments (Setup)    │ • /faculty/qr-session (Live QR) │ • /student/qr-scan (Camera QR)  │
+│ • /admin/subjects (Curriculum)  │ • /faculty/assignments (Manage) │ • /student/assignments (Submit) │
+│ • /admin/timetable (Scheduler)  │ • /faculty/grades (Gradebook)   │ • /student/grades (Report Card) │
+│ • /admin/analytics (Recharts)   │ • /faculty/leaves (Approvals)   │ • /student/leaves (Apply/Track) │
+│ • /profile                      │ • /faculty/timetable (Classes)  │ • /student/timetable (Schedule) │
+│ • /notifications (Broadcasts)   │ • /profile                      │ • /profile                      │
+│                                 │ • /notifications                │ • /notifications                │
+└─────────────────────────────────┴─────────────────────────────────┴─────────────────────────────────┘
 ```
 
 ---
@@ -567,28 +514,28 @@ sequenceDiagram
     autonumber
     actor User as User Browser
     participant API as Spring Boot API (:8080)
-    participant Sec as Spring Security Filter
+    participant Sec as Spring Security Filter Chain
+    participant DB as MySQL Database (:3306)
     participant JWT as JwtTokenProvider
-    participant DB as MySQL Database
 
     User->>API: POST /api/auth/login {email, password}
     API->>Sec: DaoAuthenticationProvider.authenticate()
-    Sec->>DB: Query User by email
+    Sec->>DB: Query User record by email
     DB-->>Sec: User entity (BCrypt hash)
     Sec->>Sec: BCrypt.checkpw(password, hash)
-    Sec-->>API: Authentication success
+    Sec-->>API: Authentication verified
     API->>JWT: generateToken(userDetails)
-    JWT-->>API: JWT Token (Signed HMAC-SHA256)
+    JWT-->>API: HMAC-SHA256 JWT Token (24h expiration)
     API-->>User: 200 OK {token, user: {id, email, role, ...}}
 
     Note over User: Token stored in localStorage (sms_token)
 
-    User->>API: GET /api/students (Header: Authorization: Bearer <token>)
-    API->>Sec: JwtAuthenticationFilter intercepts
-    Sec->>JWT: validateToken(token) & getUsername(token)
+    User->>API: GET /api/assignments (Header: Authorization: Bearer <token>)
+    API->>Sec: JwtAuthenticationFilter intercepts request
+    Sec->>JWT: validateToken(token) & extractUsername(token)
     JWT-->>Sec: Valid (Claims: username, roles, exp)
     Sec->>Sec: Set SecurityContextHolder(authentication)
-    Sec->>API: Controller executes (@PreAuthorize)
+    Sec->>API: Execute Controller Method (@PreAuthorize)
     API-->>User: 200 OK [Data payload]
 ```
 
@@ -596,40 +543,41 @@ sequenceDiagram
 
 ## 8. Dynamic QR Attendance Mechanism
 
-To eliminate "buddy punching" (students sharing static QR images or attendance links), the system utilizes dynamic, time-limited cryptographic tokens:
+To prevent attendance spoofing (students sharing static QR screenshots or links), Smart-SMS implements time-expiring, cryptographically signed tokens:
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Faculty as Faculty Member
-    participant Backend as Spring Boot API
-    participant QR as FastAPI QR Microservice (:8001)
-    actor Student as Student Phone/Laptop
-    participant DB as MySQL Database
+    participant Backend as Spring Boot API (:8080)
+    participant QRService as FastAPI QR Microservice (:8001)
+    actor Student as Student Smartphone / Camera
+    participant DB as MySQL Database (:3306)
 
     Faculty->>Backend: POST /api/attendance/qr/start {subjectId, className, expiryMinutes: 10}
     Backend->>Backend: Create AttendanceSession (status: ACTIVE)
-    Backend->>QR: POST /api/qr/generate {sessionId, subjectId, facultyId, className, expirySeconds: 60}
-    QR->>QR: Generate JWT Token with 60s exp + render Base64 PNG QR image
-    QR-->>Backend: {token, qrImageBase64, expiresAt}
-    Backend->>DB: Store active session & token
-    Backend-->>Faculty: Display Live QR Code on Classroom Projector
+    Backend->>QRService: POST /api/qr/generate {sessionId, subjectId, facultyId, expirySeconds: 60}
+    QRService->>QRService: Generate HS256 Token with 60s expiration + render Base64 PNG QR
+    QRService-->>Backend: {token, qrImageBase64, expiresAt}
+    Backend->>DB: Save session record with active token
+    Backend-->>Faculty: Display Live QR Image on Classroom Screen
 
-    Student->>Student: Opens /student/qr-scan (Camera Active)
+    Student->>Student: Opens /student/qr-scan (HTML5 Webcam Stream)
     Student->>Backend: POST /api/attendance/qr/mark {token}
-    Backend->>QR: POST /api/qr/validate {token}
-    alt Token Expired or Invalid
-        QR-->>Backend: 400 Bad Request (Expired Signature)
-        Backend-->>Student: 400 "QR Code has expired. Refresh screen."
-    else Token Signature Valid
-        QR-->>Backend: 200 OK {valid: true, sessionId, subjectId}
-        Backend->>DB: INSERT INTO attendance (student_id, session_id, status)
+    Backend->>QRService: POST /api/qr/validate {token}
+
+    alt Token Expired or Invalid Signature
+        QRService-->>Backend: 400 Bad Request ("Token expired")
+        Backend-->>Student: 400 Bad Request ("QR code expired. Please scan fresh code.")
+    else Token Signature & Expiry Valid
+        QRService-->>Backend: 200 OK {valid: true, sessionId, subjectId}
+        Backend->>DB: INSERT INTO attendance (student_id, session_id, status: 'PRESENT')
         alt Student Already Marked
-            DB-->>Backend: Duplicate Key Violation
-            Backend-->>Student: 409 "Attendance already recorded for this session"
-        else Success
-            DB-->>Backend: Record Created
-            Backend-->>Student: 200 OK "Attendance marked successfully!"
+            DB-->>Backend: Duplicate Key Constraint uk_student_session
+            Backend-->>Student: 409 Conflict ("Attendance already recorded for this session")
+        else First-time Mark
+            DB-->>Backend: Record Persisted
+            Backend-->>Student: 200 OK ("Attendance marked successfully!")
         end
     end
 ```
@@ -639,26 +587,26 @@ sequenceDiagram
 ## 9. Installation & Execution Guide
 
 ### 9.1 Prerequisites
-- **Java Development Kit (JDK):** Version 17 LTS or higher
-- **Build Tool:** Apache Maven 3.8+
-- **Node.js:** Version 18.x or 20.x LTS with `npm`
-- **Python:** Version 3.9+ with `pip`
+- **Java Development Kit (JDK):** Version 17 LTS or higher (`java -version`)
+- **Build Tool:** Apache Maven 3.8+ (`mvn -version`)
+- **Node.js Runtime:** Version 18.x or 20.x LTS with `npm` (`node -v`, `npm -v`)
+- **Python Runtime:** Version 3.9+ with `pip` (`python --version`, `pip --version`)
 - **Database:** MySQL Server 8.0 / 8.4 (or use the included portable MySQL binaries)
 
 ---
 
 ### 9.2 Database Setup
 
-#### Option A: Using Included Portable MySQL Server
+#### Option A: Using Included Portable MySQL Server (Windows)
 ```powershell
-# In project root:
+# From the project root directory:
 .\mysql_portable\mysql-8.4.9-winx64\bin\mysqld.exe --console
 ```
-The database runs on `localhost:3306` with default user `root` and empty password `""`.
+*The database listens on `localhost:3306` with default user `root` and empty password `""`.*
 
 #### Option B: Using Installed MySQL Service
 1. Start your local MySQL service.
-2. Create the database and seed tables:
+2. Initialize database schema and seed data:
    ```bash
    mysql -u root -p < database/schema/schema.sql
    mysql -u root -p < database/seed/seed.sql
@@ -666,9 +614,9 @@ The database runs on `localhost:3306` with default user `root` and empty passwor
 
 ---
 
-### 9.3 Python QR Microservice Setup
+### 9.3 Python QR Attendance Microservice Setup
 
-1. Open a new terminal in the `qr-service` directory:
+1. Open a terminal in `qr-service/`:
    ```bash
    cd qr-service
    ```
@@ -682,31 +630,32 @@ The database runs on `localhost:3306` with default user `root` and empty passwor
    python3 -m venv venv
    source venv/bin/activate
    ```
-3. Install dependencies:
+3. Install required packages:
    ```bash
    pip install -r requirements.txt
    ```
 4. Start the FastAPI microservice on port **8001**:
    ```bash
-   uvicorn main:app --port 8001 --reload
+   python -m uvicorn main:app --port 8001
    ```
-   *Health Check:* [http://localhost:8001/health](http://localhost:8001/health)
+   *Health Check Probe:* [http://localhost:8001/health](http://localhost:8001/health)
 
 ---
 
 ### 9.4 Spring Boot Backend Setup
 
-1. Open a terminal in the `backend` directory:
+1. Open a terminal in `backend/`:
    ```bash
    cd backend
    ```
-2. Verify database credentials in `src/main/resources/application.properties`:
+2. Verify configuration in `src/main/resources/application.properties`:
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/smart_sms?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
    spring.datasource.username=root
    spring.datasource.password=
+   python.service.url=http://localhost:8001
    ```
-3. Compile and launch the application:
+3. Compile and run the Spring Boot application:
    ```bash
    mvn clean spring-boot:run
    ```
@@ -718,50 +667,41 @@ The database runs on `localhost:3306` with default user `root` and empty passwor
 
 ### 9.5 React Frontend Setup
 
-1. Open a terminal in the `frontend` directory:
+1. Open a terminal in `frontend/`:
    ```bash
    cd frontend
    npm install
    ```
-2. Launch the Vite development server:
+2. Start the Vite development server:
    ```bash
    npm run dev
    ```
-   > **Note for Windows users:** If your path contains ampersands (`&`), run Vite directly via Node:
-   > ```powershell
-   > node .\node_modules\vite\bin\vite.js
-   > ```
-3. Open your browser and navigate to:  
+   *(On Windows paths containing ampersands `&`, run: `node .\node_modules\vite\bin\vite.js --host`)*
+3. Navigate to the web application:  
    **[http://localhost:5173](http://localhost:5173)**
 
 ---
 
-## 10. Demo Credentials
+## 10. Demo Credentials & Test Accounts
 
-The pre-seeded database contains realistic accounts across all three organizational tiers:
+The pre-seeded database includes accounts across all three roles:
 
 | Role | Username / Email | Password | Access Rights & Purpose |
 | :--- | :--- | :--- | :--- |
-| 🛡️ **Administrator** | `admin@sms.edu` | `Admin@123` | Full administrative control: user provisioning, department & subject setup, timetable scheduling, campus-wide notifications, and executive analytics. |
-| 👨‍🏫 **Faculty Member** | `priya.sharma@sms.edu` | `Faculty@123` | Department: Computer Science (CSE). Can generate QR attendance sessions, issue assignments, evaluate and download student files, record grades, and approve leave requests. |
-| 👨‍🏫 **Faculty Member** | `rajan.verma@sms.edu` | `Faculty@123` | Department: Computer Science (CSE). Second faculty account for timetable and subject testing. |
-| 🎓 **Student** | `arjun.kumar@sms.edu` | `Student@123` | Department: CSE (Semester 7). Can scan live QR codes, submit coursework, monitor attendance percentages, view grades, and request leaves. |
-| 🎓 **Student** | `meera.patel@sms.edu` | `Student@123` | Department: CSE (Semester 7). Additional student account. |
+| 🛡️ **Administrator** | `admin@sms.edu` | `Admin@123` | Full system control: user provisioning, department setup, subjects, timetable scheduling, announcements, and campus analytics. |
+| 👨‍🏫 **Faculty Member** | `priya.sharma@sms.edu` | `Faculty@123` | Department: Computer Science (CSE). Conducts manual & QR attendance, creates assignments, downloads coursework, publishes grades, and reviews leaves. |
+| 👨‍🏫 **Faculty Member** | `rajan.verma@sms.edu` | `Faculty@123` | Department: Computer Science (CSE). Second faculty account for timetable and grading tests. |
+| 🎓 **Student** | `arjun.kumar@sms.edu` | `Student@123` | Department: CSE (Semester 7). Scans dynamic QR attendance, uploads coursework submissions, checks grades, and applies for leave. |
+| 🎓 **Student** | `meera.patel@sms.edu` | `Student@123` | Department: CSE (Semester 7). Second student account for submission and grade testing. |
 
 *(Quick-login buttons are also available directly on the login screen for one-click access).*
 
 ---
 
-## 11. Troubleshooting & Notes
+## 11. Production Deployment & Operational Notes
 
-- **Port Conflicts:** Ensure ports `3306` (MySQL), `8080` (Spring Boot), `5173` (Vite Frontend), and `8001` (Python QR Microservice) are free before launching.
-- **REST API Port vs. Web UI Port:** `http://localhost:8080` is the backend REST API. Accessing `http://localhost:8080/` in a web browser will return `403 Forbidden` because all non-public endpoints require JWT authentication. The interactive web application runs on **`http://localhost:5173`**.
-- **Uploaded Files:** Files uploaded by students for assignments are stored in `./uploads/assignments/`. Ensure the backend process has write permissions for this folder.
-- **CORS Errors:** In `application.properties`, `cors.allowed.origins` is configured to `http://localhost:5173`. If running the frontend on a different port or domain, update this property accordingly.
-- **QR Code Expiration:** The QR microservice tokens default to 60-second expiration. Ensure the system clock across your host machine is synchronized.
-- **Verified Bug Fixes (v1.1):**
-  - **Admin Subjects & Timetable:** Handled paginated `res.data.content` and corrected flat faculty field mappings (`f.firstName`, `f.facultyCode`).
-  - **Admin Analytics:** Realigned frontend metrics endpoints with backend (`/analytics/attendance`, `/grades`, `/students`, `/dashboard`) using `Promise.allSettled`.
-  - **Faculty Assignments:** Changed `dueDate` validation to `@FutureOrPresent` to permit same-day submissions.
-  - **Faculty Grades:** Added safe `instanceof Number` verification before casting `marksObtained`.
-
+- **Port Allocation:** Ensure ports `3306` (MySQL), `8080` (Spring Boot), `5173` (Vite Frontend), and `8001` (FastAPI Microservice) are available.
+- **REST API vs. Web Interface:** `http://localhost:8080` is the backend REST API (visiting `/` in a browser returns `403 Forbidden` because non-public endpoints require JWT). The interactive UI is accessed via **`http://localhost:5173`**.
+- **File Storage Security:** Assignment submissions are saved to `./uploads/assignments/`. Ensure the backend process has write and read permissions on this directory.
+- **CORS Configuration:** `cors.allowed.origins` in `application.properties` is configured to `http://localhost:5173`. When deploying to a production domain, set `CORS_ORIGINS` via environment variables.
+- **QR Token Synchronization:** Dynamic QR tokens default to 60-second expiration. Ensure clock synchronization (NTP) across servers and client devices.
